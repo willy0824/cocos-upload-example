@@ -36,4 +36,6 @@ jobs:
 
           git add timestamps/
           git commit -m "Add timestamp file: ${{ env.TIMESTAMP }}" || echo "No changes to commit"
-          git push
+
+          git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
+          git push origin main
