@@ -1,0 +1,32 @@
+name: Deploy to Environment
+
+on:
+  push:
+    branches:
+      - dev
+      - uat
+      - prod
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set Environment Variables
+        run: |
+          if [[ "${{ github.ref }}" == "refs/heads/dev" ]]; then
+            echo "DEPLOY_PATH=/deployments/dev/" >> $GITHUB_ENV
+          elif [[ "${{ github.ref }}" == "refs/heads/uat" ]]; then
+            echo "DEPLOY_PATH=/deployments/uat/" >> $GITHUB_ENV
+          elif [[ "${{ github.ref }}" == "refs/heads/prod" ]]; then
+            echo "DEPLOY_PATH=/deployments/prod/" >> $GITHUB_ENV
+          fi
+
+      - name: Deploy Files
+        run: |
+          echo "Deploying files to $DEPLOY_PATH"
+          mkdir -p $DEPLOY_PATH
+          cp -r * $DEPLOY_PATH
