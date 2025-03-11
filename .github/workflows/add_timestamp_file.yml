@@ -1,0 +1,33 @@
+name: Add Timestamp File
+
+on:
+  push:
+    branches:
+      - main  # 只在 main 分支觸發，根據需求更改
+
+jobs:
+  add-file:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false  # 避免權限問題
+
+      - name: Set Time Variable
+        id: time
+        run: echo "TIMESTAMP=$(date +'%Y-%m-%d_%H-%M-%S')" >> $GITHUB_ENV
+
+      - name: Create New Timestamp File
+        run: |
+          echo "This file was created at $(date)" > timestamps/${{ env.TIMESTAMP }}.txt
+          cat timestamps/${{ env.TIMESTAMP }}.txt
+
+      - name: Commit and Push Changes
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add timestamps/
+          git commit -m "Add timestamp file: ${{ env.TIMESTAMP }}"
+          git push
