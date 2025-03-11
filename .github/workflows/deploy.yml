@@ -18,13 +18,13 @@ jobs:
       - name: Set Environment Variables
         run: |
           if [[ "${{ github.ref }}" == "refs/heads/dev" ]]; then
-            echo "DEPLOY_PATH=/deployments/dev/" >> $GITHUB_ENV
+            echo "DEPLOY_PATH=/tmp/deployments/dev/" >> $GITHUB_ENV
           elif [[ "${{ github.ref }}" == "refs/heads/uat" ]]; then
-            echo "DEPLOY_PATH=/deployments/uat/" >> $GITHUB_ENV
+            echo "DEPLOY_PATH=/tmp/deployments/uat/" >> $GITHUB_ENV
           elif [[ "${{ github.ref }}" == "refs/heads/prod" ]]; then
-            echo "DEPLOY_PATH=/deployments/prod/" >> $GITHUB_ENV
+            echo "DEPLOY_PATH=/tmp/deployments/prod/" >> $GITHUB_ENV
           fi
-
+      
       - name: Deploy Files
         run: |
           echo "Deploying files to $DEPLOY_PATH"
