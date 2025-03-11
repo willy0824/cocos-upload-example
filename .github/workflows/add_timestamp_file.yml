@@ -3,7 +3,7 @@ name: Add Timestamp File
 on:
   push:
     branches:
-      - main  # 只在 main 分支觸發，根據需求更改
+      - main  # 觸發條件：當 push 到 main 分支時執行
 
 jobs:
   add-file:
@@ -13,11 +13,14 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
         with:
-          persist-credentials: false  # 避免權限問題
+          persist-credentials: false  # 避免 GitHub Actions 遇到 push 權限問題
 
-      - name: Set Time Variable
+      - name: Set Timestamp Variable
         id: time
         run: echo "TIMESTAMP=$(date +'%Y-%m-%d_%H-%M-%S')" >> $GITHUB_ENV
+
+      - name: Ensure timestamps directory exists
+        run: mkdir -p timestamps  # 確保 timestamps/ 目錄存在
 
       - name: Create New Timestamp File
         run: |
@@ -25,9 +28,12 @@ jobs:
           cat timestamps/${{ env.TIMESTAMP }}.txt
 
       - name: Commit and Push Changes
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
           git add timestamps/
-          git commit -m "Add timestamp file: ${{ env.TIMESTAMP }}"
+          git commit -m "Add timestamp file: ${{ env.TIMESTAMP }}" || echo "No changes to commit"
           git push
