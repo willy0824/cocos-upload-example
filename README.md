@@ -1,3 +1,3 @@
 # cocos-upload-example
 
-test version 1.0
+test version 2.0
